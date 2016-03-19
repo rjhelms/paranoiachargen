@@ -126,7 +126,7 @@ class Character(object):
             for society in  DataTables.SECRET_SOCIETIES:
                 if (society[1] <= secret_society_roll
                     & secret_society_roll <= society[2]):
-                    if society[3] is None:  # society with no mutant restriction
+                    if society[3] is None: # society with no mutant restriction
                         self._secret_society = society[0]
                     else:
                         for power in self._mutant_powers:
@@ -276,7 +276,8 @@ class Character(object):
                     knife_melee_governing_skill = skill
 
         if knife_melee_governing_skill is not None:
-            knife_melee_to_hit = 15 + (knife_melee_governing_skill.character_level * 5)
+            knife_melee_to_hit = 15 + (knife_melee_governing_skill
+                                       .character_level * 5)
 
         bonus = self._secondary_attributes["melee bonus"]
         knife_melee_to_hit += bonus
@@ -312,7 +313,8 @@ class Character(object):
                     knife_thrown_governing_skill = skill
 
         if knife_thrown_governing_skill is not None:
-            knife_thrown_to_hit = 15 + (knife_thrown_governing_skill.character_level * 5)
+            knife_thrown_to_hit = 15 + (knife_thrown_governing_skill
+                                        .character_level * 5)
 
         bonus = self._secondary_attributes["aimed weapon bonus"]
         knife_thrown_to_hit += bonus
@@ -468,7 +470,8 @@ class Skill(object):
         governing_attribute: the secondary character attribute applying to this 
             skill
         base_level: the level of the skill, as listed in the Player's Handbook
-        child_skills: a list of Skill objects representing this skill's children
+        child_skills: a list of Skill objects representing this skill's 
+            children
         parent_skill: the Skill object representing this skill's parent
         character_level: the current character level for this skill, or None
             if the character has no level in it
@@ -524,7 +527,8 @@ class Skill(object):
         '''
         print(str.format("\t{0} ({2}) - {1}", self._name,
                          self.governing_attribute,
-                         self.base_level).expandtabs((self.base_level - 1) * 4))
+                         self.base_level).expandtabs((self.base_level - 1) 
+                                                     * 4))
         for child in self.child_skills:
             child.print_skill_and_children()
 
@@ -555,7 +559,8 @@ class Skill(object):
             level = 5
         else:
             level = 15 + (self.character_level * 5)
-            if (attributes is not None) & (self.governing_attribute is not None):
+            if ((attributes is not None) 
+                & (self.governing_attribute is not None)):
                 level += attributes[self.governing_attribute]
 
         if level < 5:
@@ -703,8 +708,8 @@ class DataTables(object):
         SKILLS: skills, with attributes, base levels, and parents
         TROUBLESHOOTER_SKILLS: the skills all Troubleshooters have
         SERVICE_GROUP_SKILL_COUNT: the number of service group skills to assign
-        SERVICE_GROUP_SKILLS: a dictionary of the top-level skills corresponding
-            to each service group
+        SERVICE_GROUP_SKILLS: a dictionary of the top-level skills 
+            corresponding to each service group
         FREE_SKILL_COUNT: the number of skills a Troubleshooter can choose 
             freely
     '''
@@ -1165,7 +1170,8 @@ class DataTables(object):
         ["hunting, fishing, and gathering", "comprehension bonus", 3,
          "Survival"],
         ["trapping", "comprehension bonus", 3, "Survival"],
-        ["Primitive Warfare", "comprehension bonus", 2, "Hostile Environments"],
+        ["Primitive Warfare", "comprehension bonus", 2, 
+         "Hostile Environments"],
         ["stealth", "comprehension bonus", 3, "Primitive Warfare"],
         ["ambush", "comprehension bonus", 3, "Primitive Warfare"],
         ["primitive melee weapons", "melee bonus", 3, "Primitive Warfare"],
@@ -1182,7 +1188,8 @@ class DataTables(object):
         ["navigation", "comprehension bonus", 3, "Travel"],
         ["camping", "comprehension bonus", 3, "Travel"],
         ["mountain climbing", "comprehension bonus", 3, "Travel"],
-        ["Vehicle Combat Weapons", "aimed weapon bonus", 2, "Vehicle Services"],
+        ["Vehicle Combat Weapons", "aimed weapon bonus", 2, 
+         "Vehicle Services"],
         ["Aimed Weapons", "aimed weapon bonus", 3, "Vehicle Combat Weapons"],
         ["laser cannon", "aimed weapon bonus", 4, "Aimed Weapons"],
         ["tube cannon", "aimed weapon bonus", 4, "Aimed Weapons"],
@@ -1191,7 +1198,8 @@ class DataTables(object):
         ["shock cannon", "aimed weapon bonus", 4, "Aimed Weapons"],
         ["fire-thrower", "aimed weapon bonus", 4, "Aimed Weapons"],
         ["anti-missile laser", "aimed weapon bonus", 4, "Aimed Weapons"],
-        ["Launched Weapons", "aimed weapon bonus", 3, "Vehicle Combat Weapons"],
+        ["Launched Weapons", "aimed weapon bonus", 3, 
+         "Vehicle Combat Weapons"],
         ["drop tubes", "aimed weapon bonus", 4, "Launched Weapons"],
         ["missile racks", "aimed weapon bonus", 4, "Launched Weapons"],
         ["gas thrower", "aimed weapon bonus", 4, "Launched Weapons"],
