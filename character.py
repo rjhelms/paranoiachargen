@@ -1,12 +1,9 @@
 #!/usr/bin/python3
-'''
-Created on 2016-03-17
 
-@author: rob
-'''
+import os
 from random import randint, choice
 import string
-import os
+
 
 class Character(object):
     '''
@@ -439,7 +436,7 @@ class Dice(object):
     '''
     Class to handle die-rolling behaviour
     '''
-    
+
     @classmethod
     def roll(cls, number, die, modifier=0):
         '''
@@ -542,7 +539,7 @@ class Skill(object):
         Args:
             attributes: a dictionary of secondary attributes to use for
                 modifying skill percentages
-        ''' 
+        '''
         if self.character_level is not None:
             print(str.format("\t{0} ({1}) - {3}%/{2}%", self._name,
                              self.character_level,
@@ -643,7 +640,7 @@ class SkillTree(object):
         Args:
             attributes: a dictionary of secondary attributes to use for
                 modifying skill percentages
-        ''' 
+        '''
         for skill in self.top_level_skills:
             skill.print_character_skill_and_children(attributes)
 
@@ -667,7 +664,7 @@ class Names(object):
         self.male_names = []
         self.female_names = []
 
-        file = open(os.path.join(os.path.dirname(__file__), self._NAME_FILE), 
+        file = open(os.path.join(os.path.dirname(__file__), self._NAME_FILE),
                     'r')
 
         for line in file:
@@ -711,7 +708,7 @@ class DataTables(object):
         FREE_SKILL_COUNT: the number of skills a Troubleshooter can choose 
             freely
     '''
-    
+
     # primary attributes and their die rolls
     PRIMARY_ATTRIBUTES = {
         'strength': [1, 10, 8],
@@ -1004,7 +1001,7 @@ class DataTables(object):
         ["Sierra Club", 91, 95, None],
         ["Other", 96, 100, None]
     ]
-    
+
     # normal mutant powers, with category, die rolls and special rules
     # special rule 1: add another mutant power if this is the only one
     # special rule 2: roll an extraordinary mutant power
