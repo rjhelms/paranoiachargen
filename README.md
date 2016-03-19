@@ -12,10 +12,14 @@ A script to generate characters for the first edition of the Paranoia RPG.
 * Output fits nicely on a single page of letter paper, in 12pt monospace text
 
 ## Usage
-Run the character.py script in the Python interpreter installed on your system. In most cases, this will look something like this:
+Run the character.py script.
 
-    python3 ./character.py
-    
+    ./character.py
+
+Optionally, output can be redirected to a file for printing as a character sheet:
+
+    ./character.py > character_sheet.txt
+        
 ## Sample Output
 
     NAME                Ike-R-VZQ-1
