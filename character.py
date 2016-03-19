@@ -1269,7 +1269,7 @@ class DataTables(object):
         ["civil", "comprehension bonus", 3, "Engineering"],
         ["chemical", "comprehension bonus", 3, "Engineering"],
         ["plastiforming", "comprehension bonus", 3, "Engineering"],
-        ["communicationss", "comprehension bonus", 3, "Engineering"],
+        ["communications", "comprehension bonus", 3, "Engineering"],
     ]
 
     TROUBLESHOOTER_SKILLS = [
