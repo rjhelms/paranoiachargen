@@ -74,6 +74,15 @@ class Character(object):
         if (attribute_sum <= 65):
             total_power_count += 1
 
+        if total_power_count >= 3: # get an extraordinary power
+            power_roll = Dice.roll(1, 100, 0)
+            
+            for value in DataTables.EXTRAORDINARY_MUTANT_POWERS:
+                if value[2] <= power_roll & power_roll <= value[3]:
+                    power = value
+                    
+            current_powers.append(power)
+            
         while (len(current_powers) < total_power_count):
             while True:
                 power_roll = Dice.roll(1, 100, 0)
