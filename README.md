@@ -68,3 +68,13 @@ Optionally, output can be redirected to a file for printing as a character sheet
 * For simplicity's sake, plasticord is purchased in 25 feet increments, rather than 1 foot per the Player's Guide
 * Will not assign treasonous skills - again, this is per the Player's Guide
 * Skills aren't assigned "intelligently", so generated characters may have useless skills, or skills with very low secondary attribute bonuses
+
+## Acknoweldgements
+The rules for character creation, and all the tables used, originate in the Paranoia Player's Handbook, first edition, &copy; 1984 West End Games.
+
+## License
+This application is licensed under the GNU General Public License, version 3.
+
+## Contacts
+* E-mail: <robhailman@gmail.com>
+* Twitter: <https://twitter.com/rjhelms>
