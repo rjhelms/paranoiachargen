@@ -1282,6 +1282,9 @@ class DataTables(object):
 
     FREE_SKILL_COUNT = 1
 
+def main():
+    char = Character()
+    char.print_character()
 
-char = Character()
-char.print_character()
+if __name__ == "__main__":
+    main()
