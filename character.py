@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-
+'''
+A script to generate characters for the first edition of the Paranoia RPG.
+'''
 import os
 from random import randint, choice
 import string
@@ -7,7 +9,7 @@ import string
 
 class Character(object):
     '''
-    A class representing a first-edition Paranoia character 
+    A class representing a first-edition Paranoia character
     '''
     _name = None
     _primary_attributes = {}
@@ -50,8 +52,8 @@ class Character(object):
         for attribute in DataTables.SECONDARY_ATTRIBUTES:
             attribute_data = DataTables.SECONDARY_ATTRIBUTES[attribute]
             governing_primary_attribute = (self._primary_attributes
-                                                        [attribute_data[0]])
-            if (governing_primary_attribute <= 28):
+                                           [attribute_data[0]])
+            if governing_primary_attribute <= 28:
                 value = attribute_data[1][governing_primary_attribute]
             else:
                 difference = governing_primary_attribute - 28
@@ -68,22 +70,22 @@ class Character(object):
         for attribute in self._primary_attributes:
             attribute_sum += self._primary_attributes[attribute]
 
-        if (attribute_sum <= 80):
+        if attribute_sum <= 80:
             total_power_count += 1
 
-        if (attribute_sum <= 65):
+        if attribute_sum <= 65:
             total_power_count += 1
 
         if total_power_count >= 3: # get an extraordinary power
             power_roll = Dice.roll(1, 100, 0)
-            
+
             for value in DataTables.EXTRAORDINARY_MUTANT_POWERS:
                 if value[2] <= power_roll & power_roll <= value[3]:
                     power = value
-                    
+
             current_powers.append(power)
-            
-        while (len(current_powers) < total_power_count):
+
+        while len(current_powers) < total_power_count:
             while True:
                 power_roll = Dice.roll(1, 100, 0)
 
@@ -91,22 +93,22 @@ class Character(object):
                     if value[2] <= power_roll & power_roll <= value[3]:
                         power = value
 
-                if (power[4] == 2):  # extraordinary mutant power
+                if power[4] == 2:  # extraordinary mutant power
                     for value in DataTables.EXTRAORDINARY_MUTANT_POWERS:
                         if value[2] <= power_roll & power_roll <= value[3]:
                             power = value
 
-                if (current_powers.count(power) == 0):
+                if current_powers.count(power) == 0:
                     break
 
             current_powers.append(power)
 
-            if (power[4] == 1 & total_power_count == 1):
+            if power[4] == 1 & total_power_count == 1:
                 total_power_count += 1
 
         self._mutant_powers = current_powers
 
-        if (Dice.roll(1, 100, 0) <= DataTables.MUTANT_REGISTRATION_CHANCE):
+        if Dice.roll(1, 100, 0) <= DataTables.MUTANT_REGISTRATION_CHANCE:
             self._registered_mutant = True
 
     def _generate_equipment(self):
@@ -115,8 +117,8 @@ class Character(object):
 
         while True:
             item = choice(DataTables.OPTIONAL_EQUIPMENT)
-            if (self._equipment.count(item[0]) == 0):
-                if (item[1] <= self._credits):
+            if self._equipment.count(item[0]) == 0:
+                if item[1] <= self._credits:
                     self._equipment.append(item[0])
                     self._credits -= item[1]
                 else:
@@ -126,7 +128,7 @@ class Character(object):
         service_group_roll = Dice.roll(1, 10, 0)
         for group in DataTables.SERVICE_GROUPS:
             if (group[1] <= service_group_roll
-                & service_group_roll <= group[2]):
+                    & service_group_roll <= group[2]):
                 self._service_group = group[0]
 
     def _generate_secret_society(self):
@@ -134,12 +136,12 @@ class Character(object):
             secret_society_roll = Dice.roll(1, 100, 0)
             for society in  DataTables.SECRET_SOCIETIES:
                 if (society[1] <= secret_society_roll
-                    & secret_society_roll <= society[2]):
+                        & secret_society_roll <= society[2]):
                     if society[3] is None: # society with no mutant restriction
                         self._secret_society = society[0]
                     else:
                         for power in self._mutant_powers:
-                            if (power[1] == society[3]):
+                            if power[1] == society[3]:
                                 self._secret_society = society[0]
                                 break
 
@@ -148,7 +150,7 @@ class Character(object):
         # print("Assigning troubleshooter _skills")
         for potential_skill in DataTables.TROUBLESHOOTER_SKILLS:
             for skill in self._skill_tree.all_skills:
-                if skill._name == potential_skill:
+                if skill.name == potential_skill:
                     skill.character_level = skill.base_level
                     self._skills.append(skill)
 
@@ -158,7 +160,7 @@ class Character(object):
                                      SERVICE_GROUP_SKILLS[self._service_group])
         service_group_skills = []
         for skill in self._skill_tree.all_skills:
-            if service_group_skill_names.count(skill._name) > 0:
+            if service_group_skill_names.count(skill.name) > 0:
                 service_group_skills.append(skill)
 
         # print(service_group_skills)
@@ -184,7 +186,7 @@ class Character(object):
 
         # print("Assigning free _skills")
         chosen_free_skills = 0
-        while (chosen_free_skills < DataTables.FREE_SKILL_COUNT):
+        while chosen_free_skills < DataTables.FREE_SKILL_COUNT:
             new_skill = choice(self._skill_tree.top_level_skills)
 
             while self._skills.count(new_skill) > 0:
@@ -207,8 +209,8 @@ class Character(object):
     def _calculate_attribute_boosts(self):
         for skill in self._skills:
             if skill.parent_skill is not None:
-                if skill.parent_skill._name == "Self-improvement":
-                    attribute = skill._name
+                if skill.parent_skill.name == "Self-improvement":
+                    attribute = skill.name
                     boost = skill.character_level - 2
                     if boost > 4:
                         boost = 4
@@ -234,24 +236,24 @@ class Character(object):
         laser_to_hit = 5
         laser_governing_skill = None
         for skill in self._skills:
-            if skill._name == "Basics":
+            if skill.name == "Basics":
                 laser_governing_skill = skill
 
         for skill in laser_governing_skill.child_skills:
-            if ((skill._name == "Aimed Weapon Combat")
-                & (skill.character_level is not None)):
+            if ((skill.name == "Aimed Weapon Combat")
+                    & (skill.character_level is not None)):
                 laser_governing_skill = skill
 
-        if laser_governing_skill._name == "Aimed Weapon Combat":
+        if laser_governing_skill.name == "Aimed Weapon Combat":
             for skill in laser_governing_skill.child_skills:
-                if ((skill._name == "Laser")
-                    & (skill.character_level is not None)):
+                if ((skill.name == "Laser")
+                        & (skill.character_level is not None)):
                     laser_governing_skill = skill
 
-        if laser_governing_skill._name == "Laser":
+        if laser_governing_skill.name == "Laser":
             for skill in laser_governing_skill.child_skills:
-                if ((skill._name == "pistol")
-                    & (skill.character_level is not None)):
+                if ((skill.name == "pistol")
+                        & (skill.character_level is not None)):
                     laser_governing_skill = skill
 
         if laser_governing_skill is not None:
@@ -270,18 +272,18 @@ class Character(object):
         knife_melee_governing_skill = None
 
         for skill in self._skills:
-            if skill._name == "Basics":
+            if skill.name == "Basics":
                 knife_melee_governing_skill = skill
 
         for skill in knife_melee_governing_skill.child_skills:
-            if ((skill._name == "Melee Combat")
-                & (skill.character_level is not None)):
+            if ((skill.name == "Melee Combat")
+                    & (skill.character_level is not None)):
                 knife_melee_governing_skill = skill
 
-        if knife_melee_governing_skill._name == "Melee Combat":
+        if knife_melee_governing_skill.name == "Melee Combat":
             for skill in knife_melee_governing_skill.child_skills:
-                if ((skill._name == "knife")
-                    & (skill.character_level is not None)):
+                if ((skill.name == "knife")
+                        & (skill.character_level is not None)):
                     knife_melee_governing_skill = skill
 
         if knife_melee_governing_skill is not None:
@@ -301,24 +303,24 @@ class Character(object):
         knife_thrown_to_hit = 5
         knife_thrown_governing_skill = None
         for skill in self._skills:
-            if skill._name == "Basics":
+            if skill.name == "Basics":
                 knife_thrown_governing_skill = skill
 
         for skill in knife_thrown_governing_skill.child_skills:
-            if ((skill._name == "Aimed Weapon Combat")
-                & (skill.character_level is not None)):
+            if ((skill.name == "Aimed Weapon Combat")
+                    & (skill.character_level is not None)):
                 knife_thrown_governing_skill = skill
 
-        if knife_thrown_governing_skill._name == "Aimed Weapon Combat":
+        if knife_thrown_governing_skill.name == "Aimed Weapon Combat":
             for skill in knife_thrown_governing_skill.child_skills:
-                if ((skill._name == "Projectile")
-                    & (skill.character_level is not None)):
+                if ((skill.name == "Projectile")
+                        & (skill.character_level is not None)):
                     knife_thrown_governing_skill = skill
 
-        if knife_thrown_governing_skill._name == "Projectile":
+        if knife_thrown_governing_skill.name == "Projectile":
             for skill in knife_thrown_governing_skill.child_skills:
-                if ((skill._name == "thrown knife")
-                    & (skill.character_level is not None)):
+                if ((skill.name == "thrown knife")
+                        & (skill.character_level is not None)):
                     knife_thrown_governing_skill = skill
 
         if knife_thrown_governing_skill is not None:
@@ -452,12 +454,12 @@ class Dice(object):
     def roll(cls, number, die, modifier=0):
         '''
         Performs a random die roll, directly transferable to XdX+X notation.
-        
+
         Args:
             number: the number of dice to roll
             die: the number of faces on each die
             modifier: the amount to add to the resulting roll
-        
+
         Returns:
             the resulting roll, as an integer
         '''
@@ -473,13 +475,13 @@ class Dice(object):
 class Skill(object):
     '''
     Class to represent an individual skill
-    
+
     Attributes:
         name: the name of the skill
-        governing_attribute: the secondary character attribute applying to this 
+        governing_attribute: the secondary character attribute applying to this
             skill
         base_level: the level of the skill, as listed in the Player's Handbook
-        child_skills: a list of Skill objects representing this skill's 
+        child_skills: a list of Skill objects representing this skill's
             children
         parent_skill: the Skill object representing this skill's parent
         character_level: the current character level for this skill, or None
@@ -495,13 +497,13 @@ class Skill(object):
     def __init__(self, name, attribute=None, level=1):
         '''
         Constructor
-        
+
         Args:
             name: the name of the skill
             attribute: the secondary character attribute applying ot this skill
             level: the level of the skill as listed in the Player's Handbook
         '''
-        self._name = name
+        self.name = name
         self.governing_attribute = attribute
         self.base_level = level
         self.child_skills = []
@@ -509,10 +511,10 @@ class Skill(object):
     def add_child(self, child_skill):
         '''
         Assign a Skill object as a child of this skill
-        
+
         Args:
             child_skill: the Skill object for the child skill
-            
+
         Raises:
             TypeError: Only skills can be assigned to as children
             ValueError: Child skill already has a parent
@@ -524,52 +526,52 @@ class Skill(object):
         if child_skill.parent_skill is not None:
             raise ValueError("Child skill already has a parent")
 
-        if (child_skill.base_level != self.base_level + 1):
+        if child_skill.base_level != self.base_level + 1:
             raise ValueError("Child skill has invalid level")
 
         self.child_skills.append(child_skill)
         child_skill.parent_skill = self
 
-    def print_skill_and_children(self):
+    def print_skill_tree(self):
         '''
         Prints the skill tree, starting at this skill
         '''
-        print(str.format("\t{0} ({2}) - {1}", self._name,
+        print(str.format("\t{0} ({2}) - {1}", self.name,
                          self.governing_attribute,
-                         self.base_level).expandtabs((self.base_level - 1) 
+                         self.base_level).expandtabs((self.base_level - 1)
                                                      * 4))
         for child in self.child_skills:
-            child.print_skill_and_children()
+            child.print_skill_tree()
 
-    def print_character_skill_and_children(self, attributes):
+    def print_character_skill_tree(self, attributes):
         '''
-        Prints the skill tree, starting at this skill, including only skills 
+        Prints the skill tree, starting at this skill, including only skills
         with a character level
-        
+
         Additionally, prints the percentages for these skills, modified by
         the governing attributes if they are provided.
-        
+
         Args:
             attributes: a dictionary of secondary attributes to use for
                 modifying skill percentages
         '''
         if self.character_level is not None:
-            print(str.format("\t{0} ({1}) - {3}%/{2}%", self._name,
+            print(str.format("\t{0} ({1}) - {3}%/{2}%", self.name,
                              self.character_level,
                              self._calculate_percentage(attributes),
                              self._calculate_percentage(None))
                   .expandtabs((self.base_level - 1) * 4))
         for child in self.child_skills:
-            child.print_character_skill_and_children(attributes)
+            child.print_character_skill_tree(attributes)
 
     def _calculate_percentage(self, attributes):
         level = None
-        if self.character_level == None:
+        if self.character_level is None:
             level = 5
         else:
             level = 15 + (self.character_level * 5)
-            if ((attributes is not None) 
-                & (self.governing_attribute is not None)):
+            if ((attributes is not None)
+                    & (self.governing_attribute is not None)):
                 level += attributes[self.governing_attribute]
 
         if level < 5:
@@ -578,12 +580,12 @@ class Skill(object):
         return level
 
     def __repr__(self, *args, **kwargs):
-        return self._name
+        return self.name
 
 class SkillTree(object):
     '''
     A crude tree of skills
-    
+
     Attributes:
         top_level_skills: a list of Skill at the top of the tree
         all_skills: a list of every Skill object in the tree
@@ -594,9 +596,9 @@ class SkillTree(object):
     def __init__(self, skill_list):
         '''
         Constructor. Builds the skill tree.
-        
+
         Args:
-            skill_list: a list of skills, in list format - see 
+            skill_list: a list of skills, in list format - see
                 DataTables.SKILLS
         '''
         self.top_level_skills = []
@@ -615,10 +617,10 @@ class SkillTree(object):
                 temp_skill_list.append(skill)
             else:  # skill has parent
                 for existing_skill in temp_skill_list:
-                    if existing_skill._name == skill_data[3]:
+                    if existing_skill.name == skill_data[3]:
                         existing_skill.add_child(skill)
                         # print(str.format("Assigning skill {} to parent {}",
-                        #                 skill._name, existing_skill._name))
+                        #                 skill.name, existing_skill.name))
                         break
 
                 if skill.parent_skill is None:
@@ -641,27 +643,27 @@ class SkillTree(object):
         Prints the entire skill tree
         '''
         for skill in self.top_level_skills:
-            skill.print_skill_and_children()
+            skill.print_skill_tree()
 
     def print_character_skill_tree(self, attributes):
         '''
-        Prints the entire skill tree, including only skills with a character 
+        Prints the entire skill tree, including only skills with a character
         level
-        
+
         Additionally, prints the percentages for these skills, modified by
         the governing attributes if they are provided.
-        
+
         Args:
             attributes: a dictionary of secondary attributes to use for
                 modifying skill percentages
         '''
         for skill in self.top_level_skills:
-            skill.print_character_skill_and_children(attributes)
+            skill.print_character_skill_tree(attributes)
 
 class Names(object):
     '''
     A class for holding first names to use in random name generation.
-    
+
     Attributes:
         male_names: a list of male names
         female_names: a list of female names
@@ -697,17 +699,17 @@ class Names(object):
 class DataTables(object):
     '''
     A class containing the relevant data tables for character generation
-    
+
     Attributes:
         PRIMARY_ATTRIBUTES: primary character attributes, and their die
             rolls
         SECONDARY_ATTRIBUTES: secondary character attributes, and information
             on how they are calculated
         SERVICE_GROUPS: service groups, and the corresponding values on a d10
-        SECRET_SOCIETIES: secret societies, and their corresponding values on a 
+        SECRET_SOCIETIES: secret societies, and their corresponding values on a
             d100 and mutant power category restrictions
         NORMAL_MUTANT_POWERS: normal mutant powers, their corresponding values
-            on a d100, and any special rulse
+            on a d100, and any special rules
         EXTRAORDINARY_MUTANT_POWERS: extraordinary mutant powers, and their
             corresponding values on a d100
         MUTANT_REGISTRATION_CHANCE: the percentile chance that a character will
@@ -717,9 +719,9 @@ class DataTables(object):
         SKILLS: skills, with attributes, base levels, and parents
         TROUBLESHOOTER_SKILLS: the skills all Troubleshooters have
         SERVICE_GROUP_SKILL_COUNT: the number of service group skills to assign
-        SERVICE_GROUP_SKILLS: a dictionary of the top-level skills 
+        SERVICE_GROUP_SKILLS: a dictionary of the top-level skills
             corresponding to each service group
-        FREE_SKILL_COUNT: the number of skills a Troubleshooter can choose 
+        FREE_SKILL_COUNT: the number of skills a Troubleshooter can choose
             freely
     '''
 
@@ -1179,7 +1181,7 @@ class DataTables(object):
         ["hunting, fishing, and gathering", "comprehension bonus", 3,
          "Survival"],
         ["trapping", "comprehension bonus", 3, "Survival"],
-        ["Primitive Warfare", "comprehension bonus", 2, 
+        ["Primitive Warfare", "comprehension bonus", 2,
          "Hostile Environments"],
         ["stealth", "comprehension bonus", 3, "Primitive Warfare"],
         ["ambush", "comprehension bonus", 3, "Primitive Warfare"],
@@ -1197,7 +1199,7 @@ class DataTables(object):
         ["navigation", "comprehension bonus", 3, "Travel"],
         ["camping", "comprehension bonus", 3, "Travel"],
         ["mountain climbing", "comprehension bonus", 3, "Travel"],
-        ["Vehicle Combat Weapons", "aimed weapon bonus", 2, 
+        ["Vehicle Combat Weapons", "aimed weapon bonus", 2,
          "Vehicle Services"],
         ["Aimed Weapons", "aimed weapon bonus", 3, "Vehicle Combat Weapons"],
         ["laser cannon", "aimed weapon bonus", 4, "Aimed Weapons"],
@@ -1207,7 +1209,7 @@ class DataTables(object):
         ["shock cannon", "aimed weapon bonus", 4, "Aimed Weapons"],
         ["fire-thrower", "aimed weapon bonus", 4, "Aimed Weapons"],
         ["anti-missile laser", "aimed weapon bonus", 4, "Aimed Weapons"],
-        ["Launched Weapons", "aimed weapon bonus", 3, 
+        ["Launched Weapons", "aimed weapon bonus", 3,
          "Vehicle Combat Weapons"],
         ["drop tubes", "aimed weapon bonus", 4, "Launched Weapons"],
         ["missile racks", "aimed weapon bonus", 4, "Launched Weapons"],
@@ -1297,6 +1299,9 @@ class DataTables(object):
     FREE_SKILL_COUNT = 1
 
 def main():
+    '''
+    Generates and prints a character.
+    '''
     char = Character()
     char.print_character()
 
